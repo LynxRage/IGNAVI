@@ -28,6 +28,7 @@ import glm
 
 from utils import post_process_depth, flip_lr
 from networks.NewCRFDepth import NewCRFDepth
+import object_posanddist as objpsdt
 
 
 # Argument Parser
@@ -40,7 +41,7 @@ parser.add_argument('--input_height',    type=int,   help='input height', defaul
 parser.add_argument('--input_width',     type=int,   help='input width',  default=640)
 parser.add_argument('--dataset',         type=str,   help='dataset this model trained on',  default='nyu')
 parser.add_argument('--crop',            type=str,   help='crop: kbcrop, edge, non',  default='non')
-parser.add_argument('--video',           type=str,   help='video path',  default='')
+parser.add_argument('--video',           type=str,   help='video path',  default='video.mkv')
 
 args = parser.parse_args()
 
@@ -171,6 +172,8 @@ class Window(QtWidgets.QWidget):
             return
         
         # Capture a frame
+        fin_frame_num = self.capture.get(cv2.CAP_PROP_FRAME_COUNT)
+        self.capture.set(cv2.CAP_PROP_POS_FRAMES, fin_frame_num)
         ret, frame = self.capture.read()
         # Loop video playback if current stream is video file
         if not ret:
@@ -233,6 +236,7 @@ class Window(QtWidgets.QWidget):
             coloredDepth = (greys(np.log10(depth * args.max_depth))[:, :, :3] * 255).astype('uint8')
             self.outputViewer.setPixmap(QtGui.QPixmap.fromImage(np_to_qimage(coloredDepth)))
             cv2.imwrite("depth_out.png", coloredDepth)
+            objpsdt.findStuff()
         
         # Update to next frame if we are live
         QtCore.QTimer.singleShot(10, self.updateInput)
