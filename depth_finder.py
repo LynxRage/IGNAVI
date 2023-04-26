@@ -176,9 +176,9 @@ class Window(QtWidgets.QWidget):
         self.capture.set(cv2.CAP_PROP_POS_FRAMES, fin_frame_num)
         ret, frame = self.capture.read()
         # Loop video playback if current stream is video file
-        if not ret:
-            self.capture.set(cv2.CAP_PROP_POS_FRAMES, 0)
-            ret, frame = self.capture.read()
+        #if not ret:
+        #    self.capture.set(cv2.CAP_PROP_POS_FRAMES, 0)
+        #    ret, frame = self.capture.read()
         
         frame_ud = cv2.resize(frame, (width_rgb, height_rgb), interpolation=cv2.INTER_LINEAR)
         frame = cv2.cvtColor(frame_ud, cv2.COLOR_BGR2RGB)
